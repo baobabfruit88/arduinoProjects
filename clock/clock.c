@@ -10,7 +10,7 @@ void setup() {
 }
 
 
-
+//Default frame is 8 by 12
 uint8_t frame[8][12] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -22,6 +22,10 @@ uint8_t frame[8][12] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+
+/*
+* This empties the "snake" or seconds indicator
+*/
 void empty(){
   frame[0][0] = 0;
   frame[0][1] = 0;
@@ -38,6 +42,9 @@ void empty(){
   matrix.renderBitmap(frame, 8, 12);
 }
 
+/*
+* Here we empty the rows that are indicating the past minutes
+*/
 void emptyMinutes(){
   for (int i = 1; i < 6; ++i){
       for (int a = 0; a < 12; a++){
@@ -47,8 +54,12 @@ void emptyMinutes(){
   }
 }
 
+/**
+* Every twelve seconds we check if a minute has past, if it has then we add a minute led, 
+* we do this 5 times (so 5 rows will be filled as 5* 12 == 60)
+*/
 void minute(){
-  int overflow = 1;
+  int overflow = 1; //We thought we needed this, but default behaviour seems to be that when there is spillover it goes to the next row by default
   if (seconds == 60) {
     if(minutes == 60){
       hours++;
@@ -82,15 +93,18 @@ void hour (){
     hours = 0;
   }
 }
-
+/**
+*   We use a "snake" to fill the first row (0) 5 times as 5 * 12 == 60
+*   After every cycle we empty the row. 
+*/
 void snake(){
   for (int i = 0; i < 13; ++i){
     frame[0][i] = 1;
-    delay(1000);
+    delay(1000); //1000 ms = 1 second
     matrix.renderBitmap(frame, 8, 12);
   }
   seconds += 12;
-  minute();
+  minute(); 
   empty();
 }
 
